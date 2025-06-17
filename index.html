@@ -39,44 +39,74 @@
       <section id="content"></section>
 
       <script id="tools-data" type="application/json">
-{
+        {
   "YOUR FAVORITES": [
     {"name": "VirusTotal", "url": "https://www.virustotal.com/gui/search/", "desc": "Scan files, IPs, domains and URLs for malware."},
-    {"name": "Shodan", "url": "https://www.shodan.io/search?query=", "desc": "Search for devices connected to the internet."},
-    {"name": "URLScan.io", "url": "https://urlscan.io/search/#", "desc": "Website scanning and analysis tool."},
-    {"name": "Censys", "url": "https://search.censys.io/hosts?q=", "desc": "Internet-wide scanning and device lookup."},
-    {"name": "AbuseIPDB", "url": "https://www.abuseipdb.com/check/", "desc": "IP address abuse report checking."}
+    {"name": "Shodan", "url": "https://www.shodan.io/search?query=", "desc": "Search for internet-connected devices."},
+    {"name": "URLScan.io", "url": "https://urlscan.io/search/#", "desc": "Scan and analyze websites."},
+    {"name": "Censys", "url": "https://search.censys.io/search?resource=hosts&q=", "desc": "Internet-wide scanning and asset search."},
+    {"name": "AbuseIPDB", "url": "https://www.abuseipdb.com/check/", "desc": "IP reputation and abuse reporting."}
   ],
   "SEARCH TOOLS": [
-    {"name": "IntelX", "url": "https://intelx.io/?s=", "desc": "Search leaked data and OSINT datasets."},
-    {"name": "Hybrid Analysis", "url": "https://www.hybrid-analysis.com/search?query=", "desc": "Malware analysis platform."},
-    {"name": "GreyNoise", "url": "https://viz.greynoise.io/ip?id=", "desc": "Classify IPs that scan the internet."},
-    {"name": "ThreatFox", "url": "https://threatfox.abuse.ch/browse.php?search=", "desc": "Search IOC indicators shared by abuse.ch."},
-    {"name": "Talos Intelligence", "url": "https://talosintelligence.com/reputation_center/lookup?search=", "desc": "Cisco’s IP/domain reputation lookup."}
+    {"name": "IntelX", "url": "https://intelx.io/?s=", "desc": "Search leaked data and OSINT records."},
+    {"name": "Hybrid Analysis", "url": "https://www.hybrid-analysis.com/search?query=", "desc": "Cloud-based malware analysis."},
+    {"name": "Grey Noise", "url": "https://viz.greynoise.io/ip/", "desc": "Noise vs targeted scanning."},
+    {"name": "ThreatFox", "url": "https://threatfox.abuse.ch/browse.php?search=", "desc": "Indicators of compromise feed."},
+    {"name": "Talos Intelligence", "url": "https://talosintelligence.com/reputation_center/lookup?search=", "desc": "Cisco Talos IP/domain reputation."}
   ],
   "DOMAIN / DNS": [
-    {"name": "SecurityTrails", "url": "https://securitytrails.com/domain/", "desc": "Comprehensive domain and DNS OSINT."},
-    {"name": "WhoisXML", "url": "https://whois.whoisxmlapi.com/lookup-domain/search?query=", "desc": "WHOIS, DNS, and IP geolocation data."},
-    {"name": "CRT.sh", "url": "https://crt.sh/?q=", "desc": "Certificate transparency search."},
-    {"name": "DNSlytics", "url": "https://dnslytics.com/domain/", "desc": "DNS tools and domain intelligence."}
+    {"name": "SecurityTrails", "url": "https://securitytrails.com/domain/", "desc": "Domain, DNS, and IP data."},
+    {"name": "WhoisXML", "url": "https://whois.whoisxmlapi.com/lookup-domain/search?query=", "desc": "WHOIS and DNS intelligence."},
+    {"name": "CRT.sh", "url": "https://crt.sh/?q=", "desc": "Certificate transparency logs."},
+    {"name": "DNSlytics", "url": "https://dnslytics.com/domain/", "desc": "IP tools and domain intelligence."}
   ],
   "FILE / HASH": [
-    {"name": "Joe Sandbox", "url": "https://www.joesandbox.com/analysis/search?q=", "desc": "Advanced malware analysis reports."},
+    {"name": "Joe Sandbox", "url": "https://www.joesandbox.com/analysis/search?q=", "desc": "Malware sandboxing service."},
     {"name": "MalShare", "url": "https://malshare.com/sample.php?action=detail&hash=", "desc": "Public malware repository."},
-    {"name": "MalwareBazaar", "url": "https://bazaar.abuse.ch/sample/", "desc": "Search malware hashes shared by the community."}
+    {"name": "MalwareBazaar", "url": "https://bazaar.abuse.ch/sample/", "desc": "Threat intelligence and hash search."}
   ],
   "EMAIL / USER": [
-    {"name": "HaveIBeenPwned", "url": "https://haveibeenpwned.com/unifiedsearch/", "desc": "Check if email has been in a data breach."},
-    {"name": "Hunter.io", "url": "https://hunter.io/email-finder/", "desc": "Find email addresses by domain."},
-    {"name": "Social Searcher", "url": "https://www.social-searcher.com/search-users/?q=", "desc": "Search user mentions across social media."}
+    {"name": "HaveIBeenPwned", "url": "https://haveibeenpwned.com/unifiedsearch/", "desc": "Check breach status for email addresses."},
+    {"name": "Hunter.io", "url": "https://hunter.io/email-finder/", "desc": "Email verification and discovery."},
+    {"name": "Social Searcher", "url": "https://www.social-searcher.com/search-users/?q=", "desc": "Social media footprint finder."}
+  ],
+  "SOCIAL": [
+    {"name": "Twitter", "url": "https://twitter.com/search?q=", "desc": "Search Twitter by handle or keyword"},
+    {"name": "Social Searcher", "url": "https://www.social-searcher.com/search-users/?q=", "desc": "Social media footprint finder"}
+  ],
+  "SANDBOX / MALWARE": [
+    {"name": "Any.run", "url": "https://any.run/search/?query=", "desc": "Interactive malware analysis service"},
+    {"name": "MetaDefender", "url": "https://metadefender.opswat.com/results#!/hash/", "desc": "Multiscanner for files and hashes"},
+    {"name": "Triage", "url": "https://tria.ge/s?q=", "desc": "Malware sandbox platform"}
+  ],
+  "CORPORATE / LEGAL": [
+    {"name": "OpenCorporates", "url": "https://opencorporates.com/companies?q=", "desc": "Global company data"}
+  ],
+  "INDEX / INFRA": [
+    {"name": "LeakIX", "url": "https://leakix.net/host/", "desc": "Internet-exposed services and sensitive data"},
+    {"name": "BinaryEdge", "url": "https://app.binaryedge.io/services/query?q=", "desc": "Global scanning and IoT device discovery"},
+    {"name": "ZoomEye", "url": "https://www.zoomeye.org/searchResult?q=", "desc": "Cyberspace search engine"},
+    {"name": "Onyphe", "url": "https://www.onyphe.io/search/?q=", "desc": "Cyber defense search engine"}
+  ],
+  "BLACKLIST / REPUTATION": [
+    {"name": "Abuse.ch SSLBL", "url": "https://sslbl.abuse.ch/ssl-certificates/lookup/?search=", "desc": "SSL certificate blacklist"},
+    {"name": "Abuse.ch URLhaus", "url": "https://urlhaus.abuse.ch/browse.php?search=", "desc": "Malicious URL database"},
+    {"name": "AlienVault OTX", "url": "https://otx.alienvault.com/indicator/general/", "desc": "IP/domain/threat lookup in threat exchange"},
+    {"name": "Robtex", "url": "https://www.robtex.com/ip-lookup/", "desc": "DNS, routing, and IP intel"},
+    {"name": "ThreatMiner", "url": "https://www.threatminer.org/search.php?q=", "desc": "Threat data enrichment & lookup"}
+  ],
+  "SPECIALIZED / SEARCH": [
+    {"name": "Google Dorks", "template": "https://www.google.com/search?q=site%3A{{query}}", "desc": "Advanced Google search dorking"}
   ]
 }
       </script>
-    </main>
+
+
+</main>
 
     <footer class="footer">
       🛡️ Made for defenders, by
-      <a href="https://www.linkedin.com/in/deepak25r/" target="_blank">P J Deepak Kumar</a>
+      <a href="https://www.linkedin.com/in/deepak25r/" target="_blank">Deepak R.</a>
     </footer>
   </body>
 </html>
