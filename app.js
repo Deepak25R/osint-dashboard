@@ -29,16 +29,36 @@ function updateLinks(e) {
 
 document.getElementById("filter").addEventListener("input", (e) => {
   const value = e.target.value.toLowerCase();
+  let anyVisible = false;
   document.querySelectorAll(".section").forEach((section) => {
-    section.style.display = [...section.querySelectorAll(".card a")].some((a) =>
+    const matches = [...section.querySelectorAll(".card a")].some((a) =>
       a.textContent.toLowerCase().includes(value)
-    ) ? "block" : "none";
+    );
+    section.style.display = matches ? "block" : "none";
+    if (matches) anyVisible = true;
   });
+
+  const fallback = document.getElementById("no-results");
+  if (!anyVisible) {
+    if (!fallback) {
+      const div = document.createElement("div");
+      div.id = "no-results";
+      div.textContent = "No matching tools found.";
+      div.style.textAlign = "center";
+      div.style.color = "var(--muted)";
+      div.style.marginTop = "2rem";
+      document.getElementById("content").appendChild(div);
+    }
+  } else if (fallback) {
+    fallback.remove();
+  }
 });
 
 document.getElementById("filter").addEventListener("dblclick", () => {
   document.getElementById("filter").value = "";
   document.querySelectorAll(".section").forEach((s) => (s.style.display = "block"));
+  const fallback = document.getElementById("no-results");
+  if (fallback) fallback.remove();
 });
 
 let toolsData = {};
@@ -64,25 +84,41 @@ function renderToolLinks() {
     const grid = document.createElement("div");
     grid.className = "grid";
 
-    tools.forEach(({ name, url, desc }) => {
+    tools.forEach(({ name, url, desc, skipSearch = false, template }) => {
       const card = document.createElement("div");
       card.className = "card";
 
       const link = document.createElement("a");
 
-      // Smart URL appending logic
-      let separator = "";
-      if (url.endsWith("/") || url.endsWith("=") || url.endsWith("?")) {
-        separator = "";
-      } else if (url.includes("?") && !url.endsWith("&")) {
-        separator = "&";
-      } else {
-        separator = "/";
+      let finalUrl = url;
+      if (!skipSearch && currentInput) {
+        const isIP = /^[\d.]+$/.test(currentInput);
+        const encoded = encodeURIComponent(currentInput);
+        const base64 = btoa(currentInput);
+
+        if (name === "Grey Noise") {
+          finalUrl = isIP
+            ? `https://viz.greynoise.io/ip/${currentInput}`
+            : `https://viz.greynoise.io/query/${currentInput}`;
+        } else if (name === "Shodan") {
+          finalUrl = isIP
+            ? `https://www.shodan.io/host/${currentInput}`
+            : `https://www.shodan.io/search?query=${encoded}`;
+        } else if (template) {
+          finalUrl = template.replace(/\{\{query\}\}/g, encoded);
+        } else if (url.endsWith("/") || url.endsWith("=") || url.endsWith("?")) {
+          finalUrl = url + encoded;
+        } else if (url.includes("?") && !url.endsWith("&")) {
+          finalUrl = url + "&" + encoded;
+        } else {
+          finalUrl = url + "/" + encoded;
+        }
       }
-      link.href = currentInput ? url + separator + encodeURIComponent(currentInput) : url;
+
+      link.href = finalUrl;
       link.target = "_blank";
       link.rel = "noopener noreferrer";
-      link.textContent = name;
+      link.textContent = skipSearch ? `🔶 ${name}` : name;
 
       const p = document.createElement("p");
       p.textContent = desc;
