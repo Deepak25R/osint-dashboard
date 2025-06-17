@@ -69,7 +69,17 @@ function renderToolLinks() {
       card.className = "card";
 
       const link = document.createElement("a");
-      link.href = url + encodeURIComponent(currentInput);
+
+      // Smart URL appending logic
+      let separator = "";
+      if (url.endsWith("/") || url.endsWith("=") || url.endsWith("?")) {
+        separator = "";
+      } else if (url.includes("?") && !url.endsWith("&")) {
+        separator = "&";
+      } else {
+        separator = "/";
+      }
+      link.href = currentInput ? url + separator + encodeURIComponent(currentInput) : url;
       link.target = "_blank";
       link.rel = "noopener noreferrer";
       link.textContent = name;
