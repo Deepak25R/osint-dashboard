@@ -1,177 +1,132 @@
-:root {
-  --bg: #f8fafc;
-  --text: #1e293b;
-  --card-bg: #ffffff;
-  --muted: #64748b;
-  --primary: #0ea5e9;
-  --primary-hover: #0284c7;
-  --radius: 0.75rem;
-  --gap: 1rem;
-  --transition: 0.25s ease-in-out;
+let currentInput = "";
+
+const themeToggle = document.getElementById("theme-toggle");
+themeToggle.addEventListener("click", () => {
+  const isDark = document.body.dataset.theme === "dark";
+  document.body.dataset.theme = isDark ? "light" : "dark";
+});
+
+const toast = document.getElementById("toast-warning");
+function showToast(message) {
+  toast.textContent = message;
+  toast.classList.remove("hidden");
+  setTimeout(() => toast.classList.add("hidden"), 3000);
 }
 
-[data-theme="dark"] {
-  --bg: #0f172a;
-  --text: #f1f5f9;
-  --card-bg: #1e293b;
-  --muted: #94a3b8;
-  --primary: #38bdf8;
-  --primary-hover: #0ea5e9;
+function updateLinks(e) {
+  e.preventDefault();
+  currentInput = document.getElementById("search").value.trim();
+  if (!currentInput) {
+    showToast("Please enter a valid IP, URL, or hash.");
+    return;
+  }
+  showToast(`✅ Tools updated with: ${currentInput}`);
+  renderToolLinks();
 }
 
-body {
-  font-family: 'Inter', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  margin: 0;
-  padding: var(--gap);
-  transition: background var(--transition), color var(--transition);
+document.getElementById("filter").addEventListener("input", (e) => {
+  const value = e.target.value.toLowerCase();
+  let anyVisible = false;
+  document.querySelectorAll(".section").forEach((section) => {
+    const matches = [...section.querySelectorAll(".card a")].some((a) =>
+      a.textContent.toLowerCase().includes(value)
+    );
+    section.style.display = matches ? "block" : "none";
+    if (matches) anyVisible = true;
+  });
+
+  const fallback = document.getElementById("no-results");
+  if (!anyVisible) {
+    if (!fallback) {
+      const div = document.createElement("div");
+      div.id = "no-results";
+      div.textContent = "No matching tools found.";
+      div.style.textAlign = "center";
+      div.style.color = "var(--muted)";
+      div.style.marginTop = "2rem";
+      document.getElementById("content").appendChild(div);
+    }
+  } else if (fallback) {
+    fallback.remove();
+  }
+});
+
+document.getElementById("filter").addEventListener("dblclick", () => {
+  document.getElementById("filter").value = "";
+  document.querySelectorAll(".section").forEach((s) => (s.style.display = "block"));
+  const fallback = document.getElementById("no-results");
+  if (fallback) fallback.remove();
+});
+
+let toolsData = {};
+
+function loadTools() {
+  const raw = document.getElementById("tools-data").textContent;
+  toolsData = JSON.parse(raw);
+  renderToolLinks();
 }
 
-header.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  padding: var(--gap) 0;
-  border-bottom: 1px solid var(--muted);
+function renderToolLinks() {
+  const container = document.getElementById("content");
+  container.innerHTML = "";
+
+  Object.entries(toolsData).forEach(([category, tools]) => {
+    const section = document.createElement("div");
+    section.className = "section";
+
+    const title = document.createElement("h2");
+    title.textContent = category;
+    section.appendChild(title);
+
+    const grid = document.createElement("div");
+    grid.className = "grid";
+
+    tools.forEach(({ name, url, desc, skipSearch = false, template }) => {
+      const card = document.createElement("div");
+      card.className = "card";
+
+      const link = document.createElement("a");
+
+      let finalUrl = url;
+      if (!skipSearch && currentInput) {
+        const isIP = /^[\d.]+$/.test(currentInput);
+        const encoded = encodeURIComponent(currentInput);
+        const base64 = btoa(currentInput);
+
+        if (name === "Grey Noise") {
+          finalUrl = isIP
+            ? `https://viz.greynoise.io/ip/${currentInput}`
+            : `https://viz.greynoise.io/query/${currentInput}`;
+        } else if (name === "Shodan") {
+          finalUrl = isIP
+            ? `https://www.shodan.io/host/${currentInput}`
+            : `https://www.shodan.io/search?query=${encoded}`;
+        } else if (template) {
+          finalUrl = template.replace(/{{query}}/g, encoded);
+        } else if (url.endsWith("/") || url.endsWith("=") || url.endsWith("?")) {
+          finalUrl = url + encoded;
+        } else if (url.includes("?") && !url.endsWith("&")) {
+          finalUrl = url + "&" + encoded;
+        } else {
+          finalUrl = url + "/" + encoded;
+        }
+      }
+
+      link.href = finalUrl;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.textContent = skipSearch ? `🔶 ${name}` : name;
+
+      const p = document.createElement("p");
+      p.textContent = desc;
+
+      card.append(link, p);
+      grid.appendChild(card);
+    });
+
+    section.appendChild(grid);
+    container.appendChild(section);
+  });
 }
 
-.dashboard-title-wrapper {
-  max-width: 60%;
-}
-
-.dashboard-title {
-  font-size: 2.25rem;
-  font-weight: 800;
-  margin: 0 0 0.5rem;
-}
-
-.dashboard-tooltip {
-  background: var(--card-bg);
-  border-left: 4px solid var(--primary);
-  padding: 0.75rem 1rem;
-  border-radius: var(--radius);
-  font-size: 0.95rem;
-  line-height: 1.6;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
-}
-
-.toggle {
-  font-size: 1.5rem;
-  background: var(--card-bg);
-  border: 1px solid var(--muted);
-  border-radius: 50%;
-  padding: 0.5rem;
-  cursor: pointer;
-  transition: background var(--transition);
-}
-.toggle:hover {
-  background: var(--primary);
-  color: white;
-}
-
-.search-bar,
-.filter-bar {
-  display: flex;
-  gap: 0.5rem;
-  margin: var(--gap) 0;
-}
-
-.search-bar input,
-.filter-bar input {
-  flex: 1;
-  padding: 0.75rem 1rem;
-  border: 1px solid var(--muted);
-  border-radius: var(--radius);
-  font-size: 1rem;
-  background: var(--card-bg);
-  color: var(--text);
-}
-
-.search-bar button {
-  padding: 0.75rem 1.5rem;
-  background: var(--primary);
-  color: #fff;
-  border: none;
-  border-radius: var(--radius);
-  font-weight: 600;
-  cursor: pointer;
-  transition: background var(--transition);
-}
-.search-bar button:hover {
-  background: var(--primary-hover);
-}
-
-section {
-  margin-top: 2rem;
-}
-
-h2 {
-  font-size: 1.25rem;
-  color: var(--primary);
-  margin-bottom: 0.75rem;
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: var(--gap);
-}
-
-.card {
-  background: var(--card-bg);
-  padding: var(--gap);
-  border-radius: var(--radius);
-  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-  text-align: center;
-  transition: all var(--transition);
-  border: 1px solid transparent;
-}
-.card:hover {
-  transform: translateY(-4px);
-  border-color: var(--primary);
-}
-
-.card a {
-  color: var(--primary);
-  text-decoration: none;
-  font-weight: 600;
-  display: block;
-  margin-bottom: 0.5rem;
-}
-.card a:hover {
-  color: var(--primary-hover);
-}
-
-.card p {
-  color: var(--muted);
-  font-size: 0.9rem;
-  margin: 0;
-}
-
-.toast {
-  position: fixed;
-  bottom: 2rem;
-  right: 2rem;
-  background: #fef2f2;
-  color: #991b1b;
-  border: 1px solid #fecaca;
-  padding: 1rem 1.25rem;
-  border-radius: 0.5rem;
-  box-shadow: 0 0 10px rgba(0,0,0,0.15);
-  font-size: 0.95rem;
-  z-index: 9999;
-}
-
-.hidden {
-  display: none !important;
-}
-
-.footer {
-  margin-top: 3rem;
-  text-align: center;
-  font-size: 0.95rem;
-  padding: 1rem 0;
-  border-top: 1px solid var(--muted);
-  color: var(--muted);
-}
+window.addEventListener("DOMContentLoaded", loadTools);
