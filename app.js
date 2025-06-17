@@ -1,5 +1,7 @@
 // app.js
 
+let currentInput = "";
+
 const themeToggle = document.getElementById("theme-toggle");
 themeToggle.addEventListener("click", () => {
   const body = document.body;
@@ -16,13 +18,13 @@ function showToast(message) {
 
 function updateLinks(e) {
   e.preventDefault();
-  const input = document.getElementById("search").value.trim();
-  if (!input) {
+  currentInput = document.getElementById("search").value.trim();
+  if (!currentInput) {
     showToast("Please enter a valid IP, URL, or hash.");
     return;
   }
-  showToast(`✅ Tools updated with: ${input}`);
-  // Placeholder: Apply to links if needed
+  showToast(`✅ Tools updated with: ${currentInput}`);
+  renderToolLinks();
 }
 
 document.getElementById("filter").addEventListener("input", (e) => {
@@ -39,12 +41,19 @@ document.getElementById("filter").addEventListener("dblclick", () => {
   document.querySelectorAll(".section").forEach((s) => (s.style.display = "block"));
 });
 
+let toolsData = {};
+
 function loadTools() {
   const raw = document.getElementById("tools-data").textContent;
-  const data = JSON.parse(raw);
-  const container = document.getElementById("content");
+  toolsData = JSON.parse(raw);
+  renderToolLinks();
+}
 
-  Object.entries(data).forEach(([category, tools]) => {
+function renderToolLinks() {
+  const container = document.getElementById("content");
+  container.innerHTML = "";
+
+  Object.entries(toolsData).forEach(([category, tools]) => {
     const section = document.createElement("div");
     section.className = "section";
 
@@ -60,7 +69,7 @@ function loadTools() {
       card.className = "card";
 
       const link = document.createElement("a");
-      link.href = url;
+      link.href = url + encodeURIComponent(currentInput);
       link.target = "_blank";
       link.rel = "noopener noreferrer";
       link.textContent = name;
